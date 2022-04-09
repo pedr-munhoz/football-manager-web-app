@@ -12,12 +12,6 @@ module.exports = {
   plugins: [],
   // add your custom rules here
   rules: {
-    'vue/multi-word-component-names': [
-      'error',
-      {
-        ignores: ['roster'],
-      },
-    ],
     'vue/valid-v-slot': [
       'error',
       {
@@ -25,4 +19,10 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    {
+      files: ['layouts/*.vue', 'pages/**/*.vue'],
+      rules: { 'vue/multi-word-component-names': 'off' },
+    },
+  ],
 }
