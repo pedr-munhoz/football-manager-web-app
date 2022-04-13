@@ -4,7 +4,9 @@
       <v-container>
         <v-row>
           <v-col>Roster</v-col>
-          <v-col />
+          <v-col>
+            <player-dialog :edit-mode="false" @confirm="create($event)" />
+          </v-col>
           <v-col>
             <v-text-field
               v-model="dataTable.search"
@@ -18,7 +20,7 @@
     </v-card-title>
     <v-data-table
       :headers="dataTable.headers"
-      :items="fields"
+      :items="players"
       :search="dataTable.search"
     >
       <template #item.isQb="{ item }">
@@ -37,7 +39,8 @@
         <player-dialog
           :old-name="item.name"
           :old-number="item.number"
-          @update="update(item, $event)"
+          edit-mode
+          @confirm="update(item, $event)"
         />
       </template>
     </v-data-table>
@@ -45,7 +48,7 @@
 </template>
 
 <script>
-import PlayerDialog from '@/components/PlayerDialog.vue'
+import PlayerDialog from '@/components/PlayerDialog.vue';
 
 export default {
   components: {
@@ -65,67 +68,81 @@ export default {
       ],
       search: '',
     },
+    players: [
+      {
+        id: 1,
+        number: '8',
+        name: 'José Mombelli Jr',
+        isQb: true,
+        isRb: false,
+        isTe: false,
+        isWr: false,
+      },
+      {
+        id: 2,
+        number: '87',
+        name: 'Pedro Munhoz',
+        isQb: false,
+        isRb: true,
+        isTe: false,
+        isWr: true,
+      },
+      {
+        id: 3,
+        number: '14',
+        name: 'Marta Munhoz',
+        isQb: false,
+        isRb: false,
+        isTe: false,
+        isWr: true,
+      },
+      {
+        id: 4,
+        number: '27',
+        name: 'Enzo Mombelli',
+        isQb: false,
+        isRb: true,
+        isTe: false,
+        isWr: false,
+      },
+      {
+        id: 5,
+        number: '3',
+        name: 'Arthur Mombelli',
+        isQb: false,
+        isRb: false,
+        isTe: false,
+        isWr: true,
+      },
+    ],
   }),
 
   computed: {
     fields() {
-      return [
-        {
-          id: '1',
-          number: '8',
-          name: 'José Mombelli Jr',
-          isQb: true,
-          isRb: false,
-          isTe: false,
-          isWr: false,
-        },
-        {
-          id: '2',
-          number: '87',
-          name: 'Pedro Munhoz',
-          isQb: false,
-          isRb: true,
-          isTe: false,
-          isWr: true,
-        },
-        {
-          id: '3',
-          number: '14',
-          name: 'Marta Munhoz',
-          isQb: false,
-          isRb: false,
-          isTe: false,
-          isWr: true,
-        },
-        {
-          id: '4',
-          number: '27',
-          name: 'Enzo Mombelli',
-          isQb: false,
-          isRb: true,
-          isTe: false,
-          isWr: false,
-        },
-        {
-          id: '5',
-          number: '03',
-          name: 'Arthur Mombelli',
-          isQb: false,
-          isRb: false,
-          isTe: false,
-          isWr: true,
-        },
-      ]
+      return this.players;
     },
   },
 
   methods: {
     update(item, event) {
-      item.number = event.number
-      item.name = event.name
+      item.number = event.number;
+      item.name = event.name;
+    },
+
+    create(event) {
+      const newPlayer = {
+        id: this.players.length + 1,
+        number: event.number,
+        name: event.name,
+        isQb: false,
+        isRb: false,
+        isTe: false,
+        isWr: false,
+      };
+      this.players.push(newPlayer);
     },
   },
-}
+};
 </script>
 
 <style>
