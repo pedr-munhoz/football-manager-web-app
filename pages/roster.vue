@@ -33,12 +33,25 @@
       <template #item.isWr="{ item }">
         <v-simple-checkbox v-model="item.isWr" />
       </template>
+      <template #item.edit="{ item }">
+        <player-dialog
+          :old-name="item.name"
+          :old-number="item.number"
+          @update="update(item, $event)"
+        />
+      </template>
     </v-data-table>
   </v-card>
 </template>
 
 <script>
+import PlayerDialog from '@/components/PlayerDialog.vue'
+
 export default {
+  components: {
+    PlayerDialog,
+  },
+
   data: () => ({
     dataTable: {
       headers: [
@@ -48,6 +61,7 @@ export default {
         { text: 'RB', value: 'isRb' },
         { text: 'TE', value: 'isTe' },
         { text: 'WR', value: 'isWr' },
+        { text: 'Edit', value: 'edit' },
       ],
       search: '',
     },
@@ -102,6 +116,13 @@ export default {
           isWr: true,
         },
       ]
+    },
+  },
+
+  methods: {
+    update(item, event) {
+      item.number = event.number
+      item.name = event.name
     },
   },
 }
