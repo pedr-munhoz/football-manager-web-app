@@ -82,7 +82,7 @@ export default {
           to: '/inspire',
         },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-account-group',
           title: 'Roster',
           to: '/roster',
         },
