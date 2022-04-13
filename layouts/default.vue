@@ -81,12 +81,17 @@ export default {
           title: 'Inspire',
           to: '/inspire',
         },
+        {
+          icon: 'mdi-account-group',
+          title: 'Roster',
+          to: '/roster',
+        },
       ],
       miniVariant: false,
       right: true,
       rightDrawer: false,
       title: 'Vuetify.js',
-    }
+    };
   },
-}
+};
 </script>
