@@ -44,9 +44,9 @@ export default {
       default: '',
     },
     oldNumber: {
-      type: String,
+      type: Number,
       required: false,
-      default: '',
+      default: null,
     },
     editMode: {
       type: Boolean,

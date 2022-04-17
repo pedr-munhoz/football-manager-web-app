@@ -23,17 +23,23 @@
       :items="players"
       :search="dataTable.search"
     >
-      <template #item.isQb="{ item }">
-        <v-simple-checkbox v-model="item.isQb" />
+      <template #item.quarterback="{ item }">
+        <v-simple-checkbox
+          v-model="item.quarterback"
+          @input="updateItem(item)"
+        />
       </template>
-      <template #item.isRb="{ item }">
-        <v-simple-checkbox v-model="item.isRb" />
+      <template #item.runningBack="{ item }">
+        <v-simple-checkbox
+          v-model="item.runningBack"
+          @input="updateItem(item)"
+        />
       </template>
-      <template #item.isTe="{ item }">
-        <v-simple-checkbox v-model="item.isTe" />
+      <template #item.tightEnd="{ item }">
+        <v-simple-checkbox v-model="item.tightEnd" @input="updateItem(item)" />
       </template>
-      <template #item.isWr="{ item }">
-        <v-simple-checkbox v-model="item.isWr" />
+      <template #item.reciever="{ item }">
+        <v-simple-checkbox v-model="item.reciever" @input="updateItem(item)" />
       </template>
       <template #item.edit="{ item }">
         <player-dialog
@@ -43,11 +49,15 @@
           @confirm="update(item, $event)"
         />
       </template>
+      <template #item.delete="{ item }">
+        <v-icon icon @click="deleteItem(item)"> mdi-delete </v-icon>
+      </template>
     </v-data-table>
   </v-card>
 </template>
 
 <script>
+import axios from 'axios';
 import PlayerDialog from '@/components/PlayerDialog.vue';
 
 export default {
@@ -60,15 +70,17 @@ export default {
       headers: [
         { text: '#', value: 'number' },
         { text: 'Name', value: 'name' },
-        { text: 'QB', value: 'isQb' },
-        { text: 'RB', value: 'isRb' },
-        { text: 'TE', value: 'isTe' },
-        { text: 'WR', value: 'isWr' },
+        { text: 'QB', value: 'quarterback' },
+        { text: 'RB', value: 'runningBack' },
+        { text: 'TE', value: 'tightEnd' },
+        { text: 'WR', value: 'reciever' },
         { text: 'Edit', value: 'edit' },
+        { text: 'Delete', value: 'delete' },
       ],
       search: '',
     },
     players: [],
+    info: null,
   }),
 
   computed: {
@@ -77,23 +89,39 @@ export default {
     },
   },
 
+  mounted() {
+    this.load();
+  },
+
   methods: {
     update(item, event) {
       item.number = event.number;
       item.name = event.name;
+      this.updateItem(item);
+    },
+
+    updateItem(item) {
+      axios
+        .put('http://localhost:8090/api/v1/Athletes', item)
+        .finally((response) => this.load());
     },
 
     create(event) {
-      const newPlayer = {
-        id: this.players.length + 1,
-        number: event.number,
-        name: event.name,
-        isQb: false,
-        isRb: false,
-        isTe: false,
-        isWr: false,
-      };
-      this.players.push(newPlayer);
+      axios
+        .post('http://localhost:8090/api/v1/Athletes', event)
+        .finally((response) => this.load());
+    },
+
+    deleteItem(item) {
+      axios
+        .delete(`http://localhost:8090/api/v1/Athletes/${item.id}`)
+        .finally((response) => this.load());
+    },
+
+    load() {
+      axios
+        .get('http://localhost:8090/api/v1/Athletes?length=50')
+        .then((response) => (this.players = response.data.itens));
     },
   },
 };
