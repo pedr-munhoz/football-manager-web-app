@@ -14,6 +14,7 @@
       :headers="dataTable.headers"
       :items="players"
       :options.sync="options"
+      :loading="loading"
       :server-items-length="playerCount"
     >
       <template #item.quarterback="{ item }">
@@ -43,7 +44,7 @@
         />
       </template>
       <template #item.delete="{ item }">
-        <v-icon icon @click="deleteItem(item)"> mdi-delete </v-icon>
+        <v-icon icon @click="deleteItem(item)"> mdi-delete-outline </v-icon>
       </template>
     </v-data-table>
   </v-card>
@@ -125,6 +126,7 @@ export default {
     },
 
     load() {
+      this.loading = true;
       axios
         .get(
           `http://localhost:8090/api/v1/Athletes?length=${
@@ -134,7 +136,8 @@ export default {
         .then((response) => {
           this.players = response.data.itens;
           this.playerCount = response.data.count;
-        });
+        })
+        .finally(() => (this.loading = false));
     },
   },
 };
