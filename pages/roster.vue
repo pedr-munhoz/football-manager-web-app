@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import AthletesService from '@/services/AthletesService';
 import PlayerDialog from '@/components/PlayerDialog.vue';
 
 export default {
@@ -96,10 +96,6 @@ export default {
     },
   },
 
-  mounted() {
-    this.load();
-  },
-
   methods: {
     update(item, event) {
       item.number = event.number;
@@ -108,31 +104,28 @@ export default {
     },
 
     updateItem(item) {
-      axios
-        .put('http://localhost:8090/api/v1/Athletes', item)
-        .finally((response) => this.load());
+      const service = new AthletesService();
+      service.Update(item).finally((response) => this.load());
     },
 
     create(event) {
-      axios
-        .post('http://localhost:8090/api/v1/Athletes', event)
-        .finally((response) => this.load());
+      const service = new AthletesService();
+      service.Create(event).finally((response) => this.load());
     },
 
     deleteItem(item) {
-      axios
-        .delete(`http://localhost:8090/api/v1/Athletes/${item.id}`)
-        .finally((response) => this.load());
+      const service = new AthletesService();
+      service.Delete(item.id).finally((response) => this.load());
     },
 
     load() {
       this.loading = true;
-      axios
-        .get(
-          `http://localhost:8090/api/v1/Athletes?length=${
-            this.options.itemsPerPage
-          }&index=${this.options.itemsPerPage * (this.options.page - 1)}`
-        )
+      const index = this.options.itemsPerPage * (this.options.page - 1);
+      const length = this.options.itemsPerPage;
+
+      const service = new AthletesService();
+      service
+        .List(index, length)
         .then((response) => {
           this.players = response.data.itens;
           this.playerCount = response.data.count;
