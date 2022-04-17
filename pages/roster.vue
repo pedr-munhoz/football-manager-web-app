@@ -7,21 +7,14 @@
           <v-col>
             <player-dialog :edit-mode="false" @confirm="create($event)" />
           </v-col>
-          <v-col>
-            <v-text-field
-              v-model="dataTable.search"
-              label="Search"
-              outlined
-              append-icon="mdi-magnify"
-            />
-          </v-col>
         </v-row>
       </v-container>
     </v-card-title>
     <v-data-table
       :headers="dataTable.headers"
       :items="players"
-      :search="dataTable.search"
+      :options.sync="options"
+      :server-items-length="playerCount"
     >
       <template #item.quarterback="{ item }">
         <v-simple-checkbox
@@ -77,15 +70,28 @@ export default {
         { text: 'Edit', value: 'edit' },
         { text: 'Delete', value: 'delete' },
       ],
-      search: '',
     },
     players: [],
+    playerCount: 0,
     info: null,
+    options: {
+      itemsPerPage: 5,
+    },
+    loading: false,
   }),
 
   computed: {
     fields() {
       return this.players;
+    },
+  },
+
+  watch: {
+    options: {
+      handler() {
+        this.load();
+      },
+      deep: true,
     },
   },
 
@@ -120,8 +126,15 @@ export default {
 
     load() {
       axios
-        .get('http://localhost:8090/api/v1/Athletes?length=50')
-        .then((response) => (this.players = response.data.itens));
+        .get(
+          `http://localhost:8090/api/v1/Athletes?length=${
+            this.options.itemsPerPage
+          }&index=${this.options.itemsPerPage * (this.options.page - 1)}`
+        )
+        .then((response) => {
+          this.players = response.data.itens;
+          this.playerCount = response.data.count;
+        });
     },
   },
 };
