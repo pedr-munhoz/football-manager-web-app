@@ -1,12 +1,12 @@
 import axios from 'axios';
 
+const basePath = `${process.env.config.apiBaseUrl}/api/v1/Athletes`;
+
 export default class AthletesService {
   List(index, length) {
     return new Promise((resolve, reject) => {
       axios
-        .get(
-          `http://localhost:8090/api/v1/Athletes?length=${length}&index=${index}`
-        )
+        .get(`${basePath}?length=${length}&index=${index}`)
         .then((response) => resolve(response))
         .catch((err) => reject(err));
     });
@@ -15,7 +15,7 @@ export default class AthletesService {
   Create(athlete) {
     return new Promise((resolve, reject) => {
       axios
-        .post('http://localhost:8090/api/v1/Athletes', athlete)
+        .post(basePath, athlete)
         .then((response) => resolve(response))
         .catch((err) => reject(err));
     });
@@ -24,7 +24,7 @@ export default class AthletesService {
   Update(athlete) {
     return new Promise((resolve, reject) => {
       axios
-        .put('http://localhost:8090/api/v1/Athletes', athlete)
+        .put(basePath, athlete)
         .then((response) => resolve(response))
         .catch((err) => reject(err));
     });
@@ -33,7 +33,7 @@ export default class AthletesService {
   Delete(id) {
     return new Promise((resolve, reject) => {
       axios
-        .delete(`http://localhost:8090/api/v1/Athletes/${id}`)
+        .delete(`${basePath}/${id}`)
         .then((response) => resolve(response))
         .catch((err) => reject(err));
     });
