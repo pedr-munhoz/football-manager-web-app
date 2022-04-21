@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const basePath = `${process.env.config.apiBaseUrl}/api/v1/Athletes`;
+const basePath = `${process.env.API_BASE_URL}/api/v1/Athletes`;
 
 export default class AthletesService {
   List(index, length) {
