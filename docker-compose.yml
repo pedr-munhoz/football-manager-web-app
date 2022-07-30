@@ -14,7 +14,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   web-api:
-    image: pedrmunhoz/football-manager-web-api:1.0.5
+    image: pedrmunhoz/football-manager-web-api:1.0.7
     environment:
       ServerDbConnectionString: "Host=postgresserver;Port=5432;Database=football_manager_db;Username=postgres;Password=123456;Pooling=false;"
     ports:
@@ -30,10 +30,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5000:5000"
+    links:
+      - web-api
+    depends_on:
+      - "web-api"
 
 volumes:
   pgdata:
-
-
-networks:
-  internal:
