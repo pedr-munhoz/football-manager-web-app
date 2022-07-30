@@ -7,33 +7,33 @@
           <v-col>
             <player-dialog :edit-mode="false" @confirm="create($event)" />
           </v-col>
-          <v-col>
-            <v-text-field
-              v-model="dataTable.search"
-              label="Search"
-              outlined
-              append-icon="mdi-magnify"
-            />
-          </v-col>
         </v-row>
       </v-container>
     </v-card-title>
     <v-data-table
       :headers="dataTable.headers"
       :items="players"
-      :search="dataTable.search"
+      :options.sync="options"
+      :loading="loading"
+      :server-items-length="playerCount"
     >
-      <template #item.isQb="{ item }">
-        <v-simple-checkbox v-model="item.isQb" />
+      <template #item.quarterback="{ item }">
+        <v-simple-checkbox
+          v-model="item.quarterback"
+          @input="updateItem(item)"
+        />
       </template>
-      <template #item.isRb="{ item }">
-        <v-simple-checkbox v-model="item.isRb" />
+      <template #item.runningBack="{ item }">
+        <v-simple-checkbox
+          v-model="item.runningBack"
+          @input="updateItem(item)"
+        />
       </template>
-      <template #item.isTe="{ item }">
-        <v-simple-checkbox v-model="item.isTe" />
+      <template #item.tightEnd="{ item }">
+        <v-simple-checkbox v-model="item.tightEnd" @input="updateItem(item)" />
       </template>
-      <template #item.isWr="{ item }">
-        <v-simple-checkbox v-model="item.isWr" />
+      <template #item.reciever="{ item }">
+        <v-simple-checkbox v-model="item.reciever" @input="updateItem(item)" />
       </template>
       <template #item.edit="{ item }">
         <player-dialog
@@ -43,11 +43,15 @@
           @confirm="update(item, $event)"
         />
       </template>
+      <template #item.delete="{ item }">
+        <v-icon icon @click="deleteItem(item)"> mdi-delete-outline </v-icon>
+      </template>
     </v-data-table>
   </v-card>
 </template>
 
 <script>
+import AthletesService from '@/services/AthletesService';
 import PlayerDialog from '@/components/PlayerDialog.vue';
 
 export default {
@@ -60,15 +64,21 @@ export default {
       headers: [
         { text: '#', value: 'number' },
         { text: 'Name', value: 'name' },
-        { text: 'QB', value: 'isQb' },
-        { text: 'RB', value: 'isRb' },
-        { text: 'TE', value: 'isTe' },
-        { text: 'WR', value: 'isWr' },
+        { text: 'QB', value: 'quarterback' },
+        { text: 'RB', value: 'runningBack' },
+        { text: 'TE', value: 'tightEnd' },
+        { text: 'WR', value: 'reciever' },
         { text: 'Edit', value: 'edit' },
+        { text: 'Delete', value: 'delete' },
       ],
-      search: '',
     },
     players: [],
+    playerCount: 0,
+    info: null,
+    options: {
+      itemsPerPage: 5,
+    },
+    loading: false,
   }),
 
   computed: {
@@ -77,23 +87,50 @@ export default {
     },
   },
 
+  watch: {
+    options: {
+      handler() {
+        this.load();
+      },
+      deep: true,
+    },
+  },
+
   methods: {
     update(item, event) {
       item.number = event.number;
       item.name = event.name;
+      this.updateItem(item);
+    },
+
+    updateItem(item) {
+      const service = new AthletesService();
+      service.Update(item).finally((response) => this.load());
     },
 
     create(event) {
-      const newPlayer = {
-        id: this.players.length + 1,
-        number: event.number,
-        name: event.name,
-        isQb: false,
-        isRb: false,
-        isTe: false,
-        isWr: false,
-      };
-      this.players.push(newPlayer);
+      const service = new AthletesService();
+      service.Create(event).finally((response) => this.load());
+    },
+
+    deleteItem(item) {
+      const service = new AthletesService();
+      service.Delete(item.id).finally((response) => this.load());
+    },
+
+    load() {
+      this.loading = true;
+      const index = this.options.itemsPerPage * (this.options.page - 1);
+      const length = this.options.itemsPerPage;
+
+      const service = new AthletesService();
+      service
+        .List(index, length)
+        .then((response) => {
+          this.players = response.data.itens;
+          this.playerCount = response.data.count;
+        })
+        .finally(() => (this.loading = false));
     },
   },
 };
