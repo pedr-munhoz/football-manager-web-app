@@ -19,7 +19,7 @@
         </v-card-title>
         <v-divider />
         <v-card-text class="mt-10">
-          <v-text-field v-model="date" label="Date" outlined />
+          <base-date-picker :initial-date="date" @update="log($event)" />
           <v-text-field v-model="homeTeam" label="Home Team" outlined />
           <v-text-field v-model="awayTeam" label="Away Team" outlined />
           <v-text-field v-model="location" label="Location" outlined />
@@ -36,8 +36,14 @@
 </template>
 
 <script>
+import BaseDatePicker from '@/components/BaseDatePicker.vue';
+
 export default {
   name: 'ConfigurationDialog',
+
+  components: {
+    BaseDatePicker,
+  },
 
   props: {
     oldDate: {
@@ -69,14 +75,14 @@ export default {
 
   data: () => ({
     dialog: false,
-    date: '',
+    date: null,
     homeTeam: '',
     awayTeam: '',
     location: '',
   }),
 
   mounted() {
-    this.date = this.oldDate;
+    this.date = this.oldDate.substr(0, 10);
     this.homeTeam = this.oldHomeTeam;
     this.awayTeam = this.oldAwayTeam;
     this.location = this.oldLocation;
@@ -100,6 +106,9 @@ export default {
       }
 
       this.close();
+    },
+    log(event) {
+      this.date = event;
     },
   },
 };

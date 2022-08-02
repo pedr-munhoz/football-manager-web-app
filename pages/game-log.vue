@@ -83,7 +83,7 @@ export default {
 
   methods: {
     update(item, event) {
-      item.date = new Date(event.date);
+      item.date = event.date;
       item.homeTeam = event.homeTeam;
       item.awayTeam = event.awayTeam;
       item.location = event.location;
@@ -124,7 +124,6 @@ export default {
       const date = new Date(dateToBeFormatted);
       return new Intl.DateTimeFormat('default', {
         dateStyle: 'full',
-        timeStyle: 'short',
       }).format(date);
     },
   },
