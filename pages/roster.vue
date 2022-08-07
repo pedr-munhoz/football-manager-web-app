@@ -55,6 +55,8 @@ import AthletesService from '@/services/AthletesService';
 import PlayerDialog from '@/components/PlayerDialog.vue';
 
 export default {
+  name: 'RosterPage',
+
   components: {
     PlayerDialog,
   },
