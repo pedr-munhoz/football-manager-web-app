@@ -86,6 +86,11 @@ export default {
           title: 'Roster',
           to: '/roster',
         },
+        {
+          icon: 'mdi-account-group',
+          title: 'Game Log',
+          to: '/game-log',
+        },
       ],
       miniVariant: false,
       right: true,
