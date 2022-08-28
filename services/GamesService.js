@@ -12,6 +12,15 @@ export default class AthletesService {
     });
   }
 
+  Find(id) {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`${basePath}/${id}`)
+        .then((response) => resolve(response))
+        .catch((err) => reject(err));
+    });
+  }
+
   Create(game) {
     return new Promise((resolve, reject) => {
       axios
