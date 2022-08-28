@@ -1,6 +1,7 @@
 <template>
   <v-card>
-    <v-card-title>{{ game.homeTeam }} vs {{ game.awayTeam }}</v-card-title>
+    <v-card-title>{{ title }}</v-card-title>
+    <v-card-subtitle v-if="loaded">{{ subtitle }}</v-card-subtitle>
   </v-card>
 </template>
 
@@ -12,15 +13,18 @@ export default {
 
   data: () => ({
     loaded: false,
-    game: {
-      homeTeam: '',
-      awayTeam: '',
-    },
+    game: null,
   }),
 
   computed: {
     title() {
       if (this.loaded) return `${this.game.homeTeam} vs ${this.game.awayTeam}`;
+
+      return 'Loading...';
+    },
+    subtitle() {
+      if (this.loaded)
+        return `${this.game.location}, ${this.formatDate(this.game.date)}`;
 
       return 'Loading...';
     },
@@ -37,6 +41,12 @@ export default {
         this.game = response.data;
         this.loaded = true;
       });
+    },
+    formatDate(dateToBeFormatted) {
+      const date = new Date(dateToBeFormatted);
+      return new Intl.DateTimeFormat('default', {
+        dateStyle: 'full',
+      }).format(date);
     },
   },
 };
