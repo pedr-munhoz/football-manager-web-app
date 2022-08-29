@@ -61,6 +61,9 @@
             <v-list-item-content>
               <v-list-item-title>
                 {{ athlete.name }} #{{ athlete.number }}
+                <v-btn icon @click="removeAthleteFromGame(athlete.id)">
+                  <v-icon icon>mdi-close</v-icon>
+                </v-btn>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -130,6 +133,10 @@ export default {
     addAthleteToGame(athleteId) {
       const service = new GamesService();
       service.AddAthlete(this.game.id, athleteId).finally(() => this.load());
+    },
+    removeAthleteFromGame(athleteId) {
+      const service = new GamesService();
+      service.RemoveAthlete(this.game.id, athleteId).finally(() => this.load());
     },
     formatDate(dateToBeFormatted) {
       const date = new Date(dateToBeFormatted);

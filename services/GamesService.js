@@ -48,6 +48,15 @@ export default class AthletesService {
     });
   }
 
+  RemoveAthlete(gameId, athleteId) {
+    return new Promise((resolve, reject) => {
+      axios
+        .delete(`${basePath}/${gameId}/athletes/${athleteId}`)
+        .then((response) => resolve(response))
+        .catch((err) => reject(err));
+    });
+  }
+
   Delete(id) {
     return new Promise((resolve, reject) => {
       axios
