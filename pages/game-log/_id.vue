@@ -6,18 +6,18 @@
       <v-card-actions>
         <v-dialog width="640px">
           <template #activator="{ on }">
-            <v-btn
-              outlined
-              v-on="on"
-              @click="loadAvailableAthletes(null, null)"
-            >
+            <v-btn outlined v-on="on" @click="loadAvailableAthletes()">
               Include athletes
             </v-btn>
           </template>
           <v-card>
             <v-card-title>Athletes Available</v-card-title>
             <v-card-text>
-              <v-text-field />
+              <v-text-field
+                v-model="availableAthleteSearchQuery"
+                prepend-icon="mdi-magnify"
+              />
+              <v-btn @click="loadAvailableAthletes()">search</v-btn>
               <v-list>
                 <v-list-item
                   v-for="athlete in availableAthletes"
@@ -85,6 +85,7 @@ export default {
     game: null,
     sections: [{ title: 'Athletes' }],
     allAthletes: [],
+    availableAthleteSearchQuery: '',
   }),
 
   computed: {
@@ -121,7 +122,20 @@ export default {
         this.loaded = true;
       });
     },
-    loadAvailableAthletes(number, name) {
+    loadAvailableAthletes() {
+      let number = null;
+      let name = null;
+
+      if (
+        this.availableAthleteSearchQuery != null &&
+        this.availableAthleteSearchQuery !== ''
+      ) {
+        if (isNaN(this.availableAthleteSearchQuery))
+          name = this.availableAthleteSearchQuery;
+        if (!isNaN(this.availableAthleteSearchQuery))
+          number = this.availableAthleteSearchQuery;
+      }
+
       const service = new AthletesService();
       service
         .Search(number, name)
