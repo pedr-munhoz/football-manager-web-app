@@ -13,26 +13,27 @@
           <v-card>
             <v-card-title>Athletes Available</v-card-title>
             <v-card-text>
-              <v-text-field
-                v-model="availableAthleteSearchQuery"
-                prepend-icon="mdi-magnify"
-              />
-              <v-btn @click="loadAvailableAthletes()">search</v-btn>
+              <v-form @submit.prevent="loadAvailableAthletes()">
+                <v-text-field
+                  v-model="availableAthleteSearchQuery"
+                  prepend-icon="mdi-magnify"
+                />
+                <v-btn type="submit">search</v-btn>
+              </v-form>
               <v-list>
                 <v-list-item
                   v-for="athlete in availableAthletes"
                   :key="athlete.id"
+                  @click="addAthleteToGame(athlete.id)"
                 >
-                  <v-btn rounded @click="addAthleteToGame(athlete.id)">
-                    <v-list-item-icon>
-                      <v-icon>mdi-account</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      <v-list-item-title>
-                        {{ athlete.name }} #{{ athlete.number }}
-                      </v-list-item-title>
-                    </v-list-item-content>
-                  </v-btn>
+                  <v-list-item-icon>
+                    <v-icon>mdi-account</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      {{ athlete.name }} #{{ athlete.number }}
+                    </v-list-item-title>
+                  </v-list-item-content>
                 </v-list-item>
               </v-list>
             </v-card-text>
@@ -108,6 +109,24 @@ export default {
     currentAthletesIds() {
       return this.game.athletes.map((x) => x.id);
     },
+    availableAthleteSearchName() {
+      if (this.availableAthleteSearchQuery == null) return null;
+
+      if (this.availableAthleteSearchQuery === '') return null;
+
+      if (!isNaN(this.availableAthleteSearchQuery)) return null;
+
+      return this.availableAthleteSearchQuery;
+    },
+    availableAthleteSearchNumber() {
+      if (this.availableAthleteSearchQuery == null) return null;
+
+      if (this.availableAthleteSearchQuery === '') return null;
+
+      if (isNaN(this.availableAthleteSearchQuery)) return null;
+
+      return this.availableAthleteSearchQuery;
+    },
   },
 
   mounted() {
@@ -123,22 +142,12 @@ export default {
       });
     },
     loadAvailableAthletes() {
-      let number = null;
-      let name = null;
-
-      if (
-        this.availableAthleteSearchQuery != null &&
-        this.availableAthleteSearchQuery !== ''
-      ) {
-        if (isNaN(this.availableAthleteSearchQuery))
-          name = this.availableAthleteSearchQuery;
-        if (!isNaN(this.availableAthleteSearchQuery))
-          number = this.availableAthleteSearchQuery;
-      }
-
       const service = new AthletesService();
       service
-        .Search(number, name)
+        .Search(
+          this.availableAthleteSearchNumber,
+          this.availableAthleteSearchName
+        )
         .then((response) => {
           this.allAthletes = response.data.itens;
         })
