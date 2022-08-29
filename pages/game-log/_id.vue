@@ -13,13 +13,12 @@
           <v-card>
             <v-card-title>Athletes Available</v-card-title>
             <v-card-text>
-              <v-form @submit.prevent="loadAvailableAthletes()">
-                <v-text-field
-                  v-model="availableAthleteSearchQuery"
-                  prepend-icon="mdi-magnify"
-                />
-                <v-btn type="submit">search</v-btn>
-              </v-form>
+              <v-text-field
+                v-model="availableAthleteSearchQuery"
+                prepend-icon="mdi-magnify"
+                autofocus
+                @input="loadAvailableAthletes()"
+              />
               <v-list>
                 <v-list-item
                   v-for="athlete in availableAthletes"
