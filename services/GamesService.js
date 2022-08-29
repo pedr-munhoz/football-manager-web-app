@@ -12,6 +12,15 @@ export default class AthletesService {
     });
   }
 
+  Find(id) {
+    return new Promise((resolve, reject) => {
+      axios
+        .get(`${basePath}/${id}`)
+        .then((response) => resolve(response))
+        .catch((err) => reject(err));
+    });
+  }
+
   Create(game) {
     return new Promise((resolve, reject) => {
       axios
@@ -25,6 +34,24 @@ export default class AthletesService {
     return new Promise((resolve, reject) => {
       axios
         .put(basePath, game)
+        .then((response) => resolve(response))
+        .catch((err) => reject(err));
+    });
+  }
+
+  AddAthlete(gameId, athleteId) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(`${basePath}/${gameId}/athletes/${athleteId}`)
+        .then((response) => resolve(response))
+        .catch((err) => reject(err));
+    });
+  }
+
+  RemoveAthlete(gameId, athleteId) {
+    return new Promise((resolve, reject) => {
+      axios
+        .delete(`${basePath}/${gameId}/athletes/${athleteId}`)
         .then((response) => resolve(response))
         .catch((err) => reject(err));
     });

@@ -12,10 +12,10 @@
     </v-card-title>
     <v-data-table
       :headers="dataTable.headers"
-      :items="players"
+      :items="games"
       :options.sync="options"
       :loading="loading"
-      :server-items-length="playerCount"
+      :server-items-length="gamesCount"
     >
       <template #item.date="{ item }">
         {{ formatDate(item.date) }}
@@ -33,6 +33,11 @@
       <template #item.delete="{ item }">
         <v-icon icon @click="deleteItem(item)"> mdi-delete-outline </v-icon>
       </template>
+      <template #item.open="{ item }">
+        <NuxtLink :to="`/game-log/${item.id}`">
+          <v-icon icon> mdi-stretch-to-page-outline </v-icon>
+        </NuxtLink>
+      </template>
     </v-data-table>
   </v-card>
 </template>
@@ -42,6 +47,8 @@ import GamesService from '@/services/GamesService';
 import GameDialog from '@/components/GameDialog.vue';
 
 export default {
+  name: 'GameLogsPage',
+
   components: {
     GameDialog,
   },
@@ -55,10 +62,11 @@ export default {
         { text: 'Location', value: 'location' },
         { text: 'Edit', value: 'edit' },
         { text: 'Delete', value: 'delete' },
+        { text: 'Open', value: 'open' },
       ],
     },
-    players: [],
-    playerCount: 0,
+    games: [],
+    gamesCount: 0,
     info: null,
     options: {
       itemsPerPage: 5,
@@ -68,7 +76,7 @@ export default {
 
   computed: {
     fields() {
-      return this.players;
+      return this.games;
     },
   },
 
@@ -114,8 +122,8 @@ export default {
       service
         .List(index, length)
         .then((response) => {
-          this.players = response.data.itens;
-          this.playerCount = response.data.count;
+          this.games = response.data.itens;
+          this.gamesCount = response.data.count;
         })
         .finally(() => (this.loading = false));
     },
