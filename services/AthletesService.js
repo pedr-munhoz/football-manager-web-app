@@ -12,6 +12,18 @@ export default class AthletesService {
     });
   }
 
+  Search(number, name) {
+    let path = `${basePath}?`;
+    if (number != null) path = `${path}number=${number}&`;
+    if (name != null) path = `${path}name=${name}`;
+    return new Promise((resolve, reject) => {
+      axios
+        .get(path)
+        .then((response) => resolve(response))
+        .catch((err) => reject(err));
+    });
+  }
+
   Create(athlete) {
     return new Promise((resolve, reject) => {
       axios

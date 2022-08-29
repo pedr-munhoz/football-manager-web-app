@@ -3,6 +3,42 @@
     <v-card-title>{{ title }}</v-card-title>
     <v-card-subtitle v-if="loaded">{{ subtitle }}</v-card-subtitle>
     <v-card-text v-if="loaded">
+      <v-card-actions>
+        <v-dialog width="640px">
+          <template #activator="{ on }">
+            <v-btn
+              outlined
+              v-on="on"
+              @click="loadAvailableAthletes(null, null)"
+            >
+              Include athletes
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title>Athletes Available</v-card-title>
+            <v-card-text>
+              <v-text-field />
+              <v-list>
+                <v-list-item
+                  v-for="athlete in availableAthletes"
+                  :key="athlete.id"
+                >
+                  <v-btn rounded>
+                    <v-list-item-icon>
+                      <v-icon>mdi-account</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        {{ athlete.name }} #{{ athlete.number }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-btn>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
+      </v-card-actions>
       <v-list>
         <v-list-group
           v-for="(item, index) in sections"
@@ -12,7 +48,9 @@
         >
           <template #activator>
             <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
+              <v-list-item-title>
+                {{ item.title }}
+              </v-list-item-title>
             </v-list-item-content>
           </template>
 
@@ -33,6 +71,7 @@
 </template>
 
 <script>
+import AthletesService from '@/services/AthletesService';
 import GamesService from '@/services/GamesService';
 
 export default {
@@ -42,6 +81,7 @@ export default {
     loaded: false,
     game: null,
     sections: [{ title: 'Athletes' }],
+    allAthletes: [],
   }),
 
   computed: {
@@ -56,6 +96,14 @@ export default {
 
       return 'Loading...';
     },
+    availableAthletes() {
+      return this.allAthletes.filter(
+        (x) => !this.currentAthletesIds.includes(x.id)
+      );
+    },
+    currentAthletesIds() {
+      return this.game.athletes.map((x) => x.id);
+    },
   },
 
   mounted() {
@@ -69,6 +117,15 @@ export default {
         this.game = response.data;
         this.loaded = true;
       });
+    },
+    loadAvailableAthletes(number, name) {
+      const service = new AthletesService();
+      service
+        .Search(number, name)
+        .then((response) => {
+          this.allAthletes = response.data.itens;
+        })
+        .finally(() => (this.loading = false));
     },
     formatDate(dateToBeFormatted) {
       const date = new Date(dateToBeFormatted);
