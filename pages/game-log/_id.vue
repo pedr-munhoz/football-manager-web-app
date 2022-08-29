@@ -23,7 +23,7 @@
                   v-for="athlete in availableAthletes"
                   :key="athlete.id"
                 >
-                  <v-btn rounded>
+                  <v-btn rounded @click="addAthleteToGame(athlete.id)">
                     <v-list-item-icon>
                       <v-icon>mdi-account</v-icon>
                     </v-list-item-icon>
@@ -126,6 +126,10 @@ export default {
           this.allAthletes = response.data.itens;
         })
         .finally(() => (this.loading = false));
+    },
+    addAthleteToGame(athleteId) {
+      const service = new GamesService();
+      service.AddAthlete(this.game.id, athleteId).finally(() => this.load());
     },
     formatDate(dateToBeFormatted) {
       const date = new Date(dateToBeFormatted);

@@ -39,6 +39,15 @@ export default class AthletesService {
     });
   }
 
+  AddAthlete(gameId, athleteId) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(`${basePath}/${gameId}/athletes/${athleteId}`)
+        .then((response) => resolve(response))
+        .catch((err) => reject(err));
+    });
+  }
+
   Delete(id) {
     return new Promise((resolve, reject) => {
       axios
